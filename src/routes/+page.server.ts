@@ -38,7 +38,7 @@ export const actions = {
         }
 
         const imageResponse = await openai.images.generate({
-            prompt: `what if ${question}?`,
+            prompt: `${question} digital art`,
             n: 1,
             size: "256x256"
         });
