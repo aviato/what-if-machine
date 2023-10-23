@@ -1,48 +1,75 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import type { ActionData } from './$types';
-    export let form: ActionData;
-    let formLoading = false;
+  import { enhance } from "$app/forms";
+  import type { ActionData } from "./$types";
+  export let form: ActionData;
+  let formLoading = false;
 </script>
 
-<section class="container">
-    <h1>What If...?</h1>
-    <form method="POST" use:enhance={() => {
-        formLoading = true;
-        return async({ update }) => {
-            formLoading = false;
-            update();
-        }
-    }}>
-        <input name="question" type="question" required placeholder="the moon was made of cheese" />?
-        <button>Go!</button>
-    </form>
-    
-    {#if formLoading}
-        <p>loading....</p>
-    {/if}
-    
-    {#if form?.success}
-        <article>
-            <h2>What if {form.question}?</h2>
-            {#if form.imageResponse}
-                {#each form.imageResponse as image, i}
-                    <img src={image.url} alt={`what if machine response #${i}`} />
-                {/each}
-            {/if}
-            <p>{form.textResponse}</p>
-            <p>DEBUG: response length = {form?.textResponse?.length}</p>
-            <p>DEBUG: word count = {form.textResponse?.split(" ").length}</p>
-        </article>
-    {/if}
+<section class="flex-col justify-center align-middle mt-24">
+  <article class="flex-col justify-center align-middle">
+    <h1 class="text-8xl text-center">What If</h1>
+    <p class="text-center m-24">
+      Welcome to the 'What If' Machine! Ask any 'What If' question you can dream
+      up, and our AI will generate imaginative answers that'll leave you
+      wondering and inspired. Try it out now!
+    </p>
+  </article>
 
+  <form
+    method="POST"
+    use:enhance={() => {
+      formLoading = true;
+      return async ({ update }) => {
+        formLoading = false;
+        update();
+      };
+    }}
+    class="flex text-center align-middle justify-center"
+  >
+    <div class="w-1/2 relative">
+      <input
+        name="question"
+        type="question"
+        required
+        placeholder="what if the moon was made of cheese"
+        class="border-2 p-4 rounded-lg w-full"
+      />
+      <button
+        class="absolute top-0 right-0 w-16 h-full rounded-r-lg bg-indigo-500 text-white"
+        >?</button
+      >
+    </div>
+  </form>
+
+  {#if formLoading}
+    <section class="flex text-center align-middle justify-center pt-16">
+      <p class="flex text-center w-`">loading....</p>
+    </section>
+  {/if}
+
+  {#if form?.success}
+    <article
+      class="flex-col justify-center align-middle text-center mt-16 mx-24"
+    >
+      <h1 class="text-4xl pb-8">What if {form.question}?</h1>
+      {#if form.imageResponse}
+        {#each form.imageResponse as image, i}
+          <div class="flex justify-center align-middle">
+            <img
+              src={image.url}
+              alt={`what if machine response #${i}`}
+              class="flex self-center"
+            />
+          </div>
+        {/each}
+      {/if}
+      <p class="pt-8"><em>{form.textResponse}</em></p>
+    </article>
+  {/if}
 </section>
 
 <style>
-    .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
+  /* input[type="question"]::placeholder {
+    text-align: center;
+  } */
 </style>
