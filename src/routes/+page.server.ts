@@ -76,14 +76,12 @@ export const actions = {
     async function insertAnswerAndImage(dbPoolClient: PoolClient) {
       try {
         const dbQueryText =
-          "INSERT INTO Answers(query, content) VALUES($1, $2) RETURNING unique_id";
+          "INSERT INTO Answers(query, content) VALUES($1, $2) RETURNING id";
         const values = [question, completion.choices[0].message.content];
 
         // Run Answer INSERT and return ID
         const dbQueryResult = await dbPoolClient.query(dbQueryText, values);
-        const answerUUID = dbQueryResult.rows[0].unique_id;
-
-        console.log(dbQueryResult);
+        const answerId = dbQueryResult.rows[0].id;
 
         try {
           // get image data as base64 from openai api
@@ -111,13 +109,13 @@ export const actions = {
 
           // Save image to cloud storage via cloudflare worker
           // https://developers.cloudflare.com/r2/api/workers/workers-api-usage/
-          await fetch(`${process.env.CF_WORKER_URL}${answerUUID}` as string, {
+          await fetch(`${process.env.CF_WORKER_URL}${answerId}` as string, {
             method: "PUT",
             headers: r2ReqHeaders,
             body: imageData,
           });
 
-          return answerUUID;
+          return answerId;
         } catch (e) {
           console.error("Failed to save image to database");
           console.error(e);
@@ -129,11 +127,13 @@ export const actions = {
       }
     }
 
-    const res = await insertAnswerAndImage(poolClient);
+    const answerId = await insertAnswerAndImage(poolClient);
+
+    // Release DB connection
     poolClient.release();
 
     return {
-      answerId: res?.answerId,
+      answerId,
       success: true,
     };
   },

@@ -9,6 +9,7 @@ export interface AnswerPageData {
   id: string;
   query: string;
   content: string;
+  imageUrl: string;
 }
 
 export const load: PageServerLoad = async ({ setHeaders, params }) => {
@@ -29,9 +30,8 @@ export const load: PageServerLoad = async ({ setHeaders, params }) => {
   // if data cannot be found, return 404
   const { rows } = await poolClient.query(
     `
-  SELECT content, query
-  FROM answers
-  WHERE unique_id = $1
+  SELECT * FROM answers
+  WHERE id = $1
   `,
     [params.slug]
   );
@@ -40,5 +40,6 @@ export const load: PageServerLoad = async ({ setHeaders, params }) => {
     id: params.slug,
     query: rows[0].query as string,
     content: rows[0].content as string,
+    imageUrl: `${process.env.CF_WORKER_URL}${params.slug}`,
   } as AnswerPageData;
 };

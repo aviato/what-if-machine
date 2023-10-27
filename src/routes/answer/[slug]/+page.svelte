@@ -1,9 +1,5 @@
 <script lang="ts">
-  interface AnswerPageData {
-    id: string;
-    query: string;
-    content: string;
-  }
+  import type { AnswerPageData } from "./+page.server";
   export let data: AnswerPageData;
 </script>
 
@@ -15,7 +11,7 @@
 
   <div class="flex justify-center align-middle">
     <img
-      src={`${process.env.CF_WORKER_URL}${data?.id}`}
+      src={data?.imageUrl}
       alt={`what if machine response image`}
       class="flex self-center"
     />

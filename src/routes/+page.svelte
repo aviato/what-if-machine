@@ -1,7 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
-
   import type { ActionData } from "./$types";
 
   export let form: ActionData;
@@ -9,8 +8,7 @@
   let formLoading = false;
 
   $: if (form?.success && form?.answerId) {
-    console.log("success!");
-    goto(`http://localhost:5173/answer/${form.answerId}`);
+    goto(`/answer/${form?.answerId}`);
   }
 </script>
 
