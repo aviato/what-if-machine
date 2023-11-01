@@ -1,0 +1,14 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PW}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - "./scripts:/docker-entrypoint-initdb.d"

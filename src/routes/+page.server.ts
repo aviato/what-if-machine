@@ -23,6 +23,7 @@ import {
 export const load: PageServerLoad = async (e: RequestEvent) => {
   const poolClient = await connectToDb();
   const sessionIdCookie = e.cookies.get("X-What-If-Machine-Session-Id");
+
   if (sessionIdCookie) {
     const warningsCount = await readUserWarningsCount(
       poolClient,
@@ -35,6 +36,7 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
     }
   } else {
     const sessionId = await createUser(poolClient);
+
     if (sessionId) {
       e.cookies.set("X-What-If-Machine-Session-Id", sessionId);
     }
@@ -43,7 +45,7 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
 
 export const actions = {
   default: async (event) => {
-    const sessionIdCookie = event.cookies.get("X-What-If-Session-Id");
+    const sessionIdCookie = event.cookies.get("X-What-If-Machine-Session-Id");
     const data = event.request.formData();
 
     if (!sessionIdCookie) {

@@ -38,10 +38,10 @@ export async function createAnswer(
   }
 }
 
-// TODO validate query
 export async function createUser(dbPoolClient: PoolClient) {
   try {
-    const dbQueryText = "INSERT INTO Users RETURNING session_id";
+    const dbQueryText =
+      "INSERT INTO Users DEFAULT VALUES RETURNING session_id;";
     const dbQueryResult = await dbPoolClient.query(dbQueryText);
     const sessionId = dbQueryResult.rows[0].session_id;
     return sessionId;
@@ -51,17 +51,14 @@ export async function createUser(dbPoolClient: PoolClient) {
   }
 }
 
-// TODO validate query
 export async function readUserWarningsCount(
   dbPoolClient: PoolClient,
   sessionId: string
 ) {
   try {
-    // Add the warning to the users's db entry
-    const dbQueryText =
-      "GET User WHERE User.session_id IS $(1) RETURNING warnings_count";
+    const dbQueryText = "SELECT warning_count FROM Users WHERE session_id = $1";
     const dbQueryResult = await dbPoolClient.query(dbQueryText, [sessionId]);
-    const warningsCount = dbQueryResult.rows[0].warnings_count;
+    const warningsCount = dbQueryResult.rows[0].warning_count;
     return warningsCount;
   } catch (e) {
     console.error("Could not read user warnings count.");
@@ -69,18 +66,29 @@ export async function readUserWarningsCount(
   }
 }
 
-// TODO validate query
 export async function updateUserWarningsCount(
   dbPoolClient: PoolClient,
   sessionId: string
 ) {
   try {
-    // Add the warning to the users's db entry
     const dbQueryText =
-      "UPDATE User WHERE User.session_id IS $(1) RETURNING warnings_count";
+      "UPDATE Users SET warning_count = warning_count + 1 WHERE session_id = $1 RETURNING warning_count";
     return await dbPoolClient.query(dbQueryText, [sessionId]);
   } catch (e) {
     console.error(`Could not save warning to user ${sessionId}`);
+    console.error(e);
+  }
+}
+
+export async function readAnswerById(
+  dbPoolClient: PoolClient,
+  answerId: string
+) {
+  try {
+    const dbQueryText = "SELECT * FROM answers WHERE id = $1";
+    return await dbPoolClient.query(dbQueryText, [answerId]);
+  } catch (e) {
+    console.error(`Could read Answer where id = ${answerId}`);
     console.error(e);
   }
 }

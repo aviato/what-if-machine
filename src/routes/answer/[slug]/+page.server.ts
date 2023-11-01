@@ -2,6 +2,7 @@ import { fail } from "@sveltejs/kit";
 import dotenv from "dotenv";
 import { Pool } from "pg";
 import type { PageServerLoad } from "./$types";
+import { connectToDb, readAnswerById } from "$lib/db";
 
 dotenv.config();
 
@@ -12,34 +13,25 @@ export interface AnswerPageData {
   imageUrl: string;
 }
 
-export const load: PageServerLoad = async ({ setHeaders, params }) => {
-  const poolClient = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PW,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-  });
-
-  // There might be a better way to do this.
-  poolClient.on("error", () => {
-    return fail(500);
-  });
+export const load: PageServerLoad = async ({ params }) => {
+  const poolClient = await connectToDb();
 
   // get answer data from db
   // if data cannot be found, return 404
-  const { rows } = await poolClient.query(
-    `
-  SELECT * FROM answers
-  WHERE id = $1
-  `,
-    [params.slug]
-  );
+  const answerResponse = await readAnswerById(poolClient, params.slug);
+
+  if (!answerResponse) {
+    throw 500;
+  }
+
+  const answer = answerResponse.rows[0];
+
+  poolClient.release();
 
   return {
     id: params.slug,
-    query: rows[0].query as string,
-    content: rows[0].content as string,
+    query: answer.query as string,
+    content: answer.content as string,
     imageUrl: `${process.env.CF_WORKER_URL}${params.slug}`,
   } as AnswerPageData;
 };
