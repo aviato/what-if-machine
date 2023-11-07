@@ -1,6 +1,5 @@
 import { fail } from "@sveltejs/kit";
 import dotenv from "dotenv";
-import { Pool } from "pg";
 import type { PageServerLoad } from "./$types";
 import { connectToDb, readAnswerById } from "$lib/db";
 import { parseResponse } from "$lib/openAi";
