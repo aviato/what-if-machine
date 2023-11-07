@@ -7,8 +7,8 @@ services:
     env_file:
       - .env
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PW}
-      - POSTGRES_DB=${DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER?:error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?:error}
+      POSTGRES_DB: ${POSTGRES_DB?:error}
     volumes:
       - "./scripts:/docker-entrypoint-initdb.d"

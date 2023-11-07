@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 import {
   connectToDb,
   createAnswer,
@@ -17,8 +17,6 @@ import {
   moderateContent,
 } from "$lib/openAi";
 
-// Upon initial load of home page, if user has 3 warnings already, send them to error page
-// If session id cannot be found, create a user and assign them a session id.
 // TODO: figure out if session id should have expiry time in this case.
 export const load: PageServerLoad = async (e: RequestEvent) => {
   const poolClient = await connectToDb();
@@ -30,9 +28,11 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
       sessionIdCookie
     );
 
-    if (typeof warningsCount !== "number" || warningsCount >= 3) {
+    if (typeof warningsCount !== "number" || warningsCount >= 2) {
       // don't even load the page, redirect to error page (not sure which one yet)
-      fail(403);
+      console.log("do a fail");
+      poolClient.release();
+      throw 500;
     }
   } else {
     const sessionId = await createUser(poolClient);
@@ -40,6 +40,8 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
     if (sessionId) {
       e.cookies.set("X-What-If-Machine-Session-Id", sessionId);
     }
+
+    poolClient.release();
   }
 };
 
@@ -68,7 +70,7 @@ export const actions = {
     const contentFlagged = moderationResult?.results[0]?.flagged;
 
     if (contentFlagged) {
-      const warningsCount = await updateUserWarningsCount(
+      const warningsCountResponse = await updateUserWarningsCount(
         poolClient,
         sessionIdCookie
       );
@@ -79,7 +81,7 @@ export const actions = {
       return {
         success: false,
         warning: true,
-        warningsCount,
+        warningCount: warningsCountResponse?.rows[0].warning_count,
       };
     }
 

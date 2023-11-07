@@ -1,15 +1,14 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { fail } from "@sveltejs/kit";
 import { Pool, type PoolClient } from "pg";
 
 // TODO: Should probably add the ability to pass down config options but I don't wanna
 // deal with this right now
 export async function connectToDb() {
   const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PW,
-    database: process.env.DB_NAME,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
   });
@@ -17,7 +16,6 @@ export async function connectToDb() {
   // There might be a better way to do this
   pool.on("error", (err) => {
     console.error("An error occurred while connecting to the db.", err.stack);
-    return fail(500);
   });
 
   return await pool.connect();
@@ -56,10 +54,14 @@ export async function readUserWarningsCount(
   sessionId: string
 ) {
   try {
-    const dbQueryText = "SELECT warning_count FROM Users WHERE session_id = $1";
-    const dbQueryResult = await dbPoolClient.query(dbQueryText, [sessionId]);
-    const warningsCount = dbQueryResult.rows[0].warning_count;
-    return warningsCount;
+    const dbQueryText = "SELECT warning_count FROM users WHERE session_id = $1";
+    const dbQueryResult = await dbPoolClient.query({
+      text: dbQueryText,
+      values: [sessionId],
+    });
+
+    const warningCount = dbQueryResult.rows[0].warning_count;
+    return warningCount;
   } catch (e) {
     console.error("Could not read user warnings count.");
     console.error(e);
@@ -89,6 +91,16 @@ export async function readAnswerById(
     return await dbPoolClient.query(dbQueryText, [answerId]);
   } catch (e) {
     console.error(`Could read Answer where id = ${answerId}`);
+    console.error(e);
+  }
+}
+
+export async function readAllAnswers(dbPoolClient: PoolClient) {
+  try {
+    const dbQueryText = "SELECT * FROM answers";
+    return await dbPoolClient.query(dbQueryText);
+  } catch (e) {
+    console.error("Error while retrieving Answers from db.");
     console.error(e);
   }
 }
