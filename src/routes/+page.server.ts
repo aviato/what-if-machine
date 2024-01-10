@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
-import { fail, redirect } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import {
   connectToDb,
   createAnswer,
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
       // don't even load the page, redirect to error page (not sure which one yet)
       console.log("do a fail");
       poolClient.release();
-      throw 500;
+      error(500, 'access revoked due to content policy violations');
     }
   } else {
     const sessionId = await createUser(poolClient);

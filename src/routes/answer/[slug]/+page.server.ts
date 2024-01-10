@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import dotenv from "dotenv";
 import type { PageServerLoad } from "./$types";
 import { connectToDb, readAnswerById } from "$lib/db";
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
   const answerResponse = await readAnswerById(poolClient, params.slug);
 
   if (!answerResponse) {
-    throw 500;
+    error(500, 'Something went wrong');
   }
 
   const answer = answerResponse.rows[0];

@@ -1,4 +1,3 @@
-import { fail } from "@sveltejs/kit";
 import dotenv from "dotenv";
 import type { PageServerLoad } from "./$types";
 import { connectToDb, readAllAnswers, readAnswerById } from "$lib/db";
