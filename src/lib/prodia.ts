@@ -1,14 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
 import { createProdia } from "prodia";
+import { PRODIA_API_KEY } from '$env/static/private';
 
 function initClient() {
-  if (!process.env.PRODIA_API_KEY) {
+  if (!PRODIA_API_KEY) {
     throw new Error("A Prodia API key is required to generate images.");
   }
 
   const prodia = createProdia({
-    apiKey: process.env.PRODIA_API_KEY,
+    apiKey: PRODIA_API_KEY,
   });
   return prodia;
 }

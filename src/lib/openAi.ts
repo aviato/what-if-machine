@@ -1,6 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
 import { OpenAI } from "openai";
+import { OPENAI_API_KEY } from '$env/static/private';
 
 export const promptWords = {
   positiveHighEnergy: [
@@ -145,10 +144,10 @@ export function parseResponse(text: string) {
 }
 
 function initClient(): OpenAI {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!OPENAI_API_KEY) {
     throw new Error("You must provide an API key.");
   }
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+   return new OpenAI({ apiKey: OPENAI_API_KEY });
 }
 
 export const openAi = initClient();

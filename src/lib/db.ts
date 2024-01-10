@@ -1,17 +1,15 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import pg, { type PoolClient } from "pg";
+import { DB_HOST, DB_PORT, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER } from '$env/static/private';
 
 // TODO: Should probably add the ability to pass down config options but I don't wanna
 // deal with this right now
 export async function connectToDb() {
   const pool = new pg.Pool({
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
+    user: POSTGRES_USER,
+    password: POSTGRES_PASSWORD,
+    database: POSTGRES_DB,
+    host: DB_HOST,
+    port: Number(DB_PORT),
   });
 
   // There might be a better way to do this

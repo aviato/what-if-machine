@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import type { PageServerLoad } from "./$types";
 import { connectToDb, readAllAnswers, readAnswerById } from "$lib/db";
-
-dotenv.config();
 
 export interface Answer {
   id: number;

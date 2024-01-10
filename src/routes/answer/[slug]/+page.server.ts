@@ -1,10 +1,8 @@
 import { error } from "@sveltejs/kit";
-import dotenv from "dotenv";
 import type { PageServerLoad } from "./$types";
 import { connectToDb, readAnswerById } from "$lib/db";
 import { parseResponse } from "$lib/openAi";
-
-dotenv.config();
+import { CF_WORKER_URL } from '$env/static/private';
 
 export interface AnswerPageData {
   id: string;
@@ -32,7 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
     id: params.slug,
     query: answer.query as string,
     content: content || (answer.content as string),
-    imageUrl: `${process.env.CF_WORKER_URL}${params.slug}`,
+    imageUrl: `${CF_WORKER_URL}${params.slug}`,
     caption,
     author,
   } as AnswerPageData;

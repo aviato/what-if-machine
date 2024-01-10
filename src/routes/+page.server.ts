@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import {
