@@ -7,7 +7,11 @@ import pg, { type PoolClient } from "pg";
 // deal with this right now
 export async function connectToDb() {
   const pool = new pg.Pool({
-    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
   });
 
   // There might be a better way to do this
