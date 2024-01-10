@@ -26,7 +26,6 @@
 	"type": "module",
 	"dependencies": {
 		"@types/pg": "^8.10.7",
-		"dotenv": "^16.3.1",
 		"openai": "^4.12.4",
 		"pg": "^8.11.3",
 		"prodia": "^0.2.0"
