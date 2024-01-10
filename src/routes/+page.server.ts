@@ -38,7 +38,7 @@ export const load: PageServerLoad = async (e: RequestEvent) => {
     const sessionId = await createUser(poolClient);
 
     if (sessionId) {
-      e.cookies.set("X-What-If-Machine-Session-Id", sessionId);
+      /* @migration task: add path argument */ /* @migration task: add path argument */ e.cookies.set("X-What-If-Machine-Session-Id", sessionId);
     }
 
     poolClient.release();
