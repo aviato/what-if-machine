@@ -21,10 +21,10 @@
   $: isInputValid = charCount <= 50;
 </script>
 
-<section class="flex flex-col md:mx-auto max-w-3xl justify-center h-full">
+<section class="flex flex-col justify-center md:mx-auto max-w-3xl h-full w-full">
   {#if !formLoading}
     <article class="flex flex-col justify-center">
-      <header class="flex flex-col self-center">
+      <header class="flex flex-col self-center mt-12">
         <h6 class="text-2xl leading-none font-extralight text-left">THE</h6>
         <h1
           class="text-7xl leading-none font-light text-center uppercase text-emerald-700"

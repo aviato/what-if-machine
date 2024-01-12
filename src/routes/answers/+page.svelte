@@ -14,9 +14,9 @@
 </script>
 
 <section
-  class="flex flex-col dark:text-white mx-8 md:mx-auto max-w-3xl mt-24 h-full"
+  class="flex flex-col dark:text-white px-8 md:mx-auto max-w-3xl my-12 h-full w-full"
 >
-  <h1 class="flex flex-col text-4xl leading-9 pb-8">Archived Answers</h1>
+  <h1 class="flex flex-col text-4xl leading-9 mb-8">Archived Answers</h1>
   <ol class="flex flex-col">
     {#each data.answers as answer}
       <a href={`/answer/${answer.id}`} class="flex justify-between">
